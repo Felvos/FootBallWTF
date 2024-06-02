@@ -1,0 +1,109 @@
+#header nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: 2px solid #8b0000;
+    display: flex;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    background-color: rgba(166, 0, 0, 0.5); 
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+}
+#header div.left {
+    display: flex;
+    margin-right: auto;
+}
+#header div.right {
+    display: flex;
+    margin-left: auto;
+}
+#header nav a {
+    position: relative;
+    color: white;
+    font-size: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-family: monospace;
+    text-decoration: none;
+    transition: color 0.3s, background-color 0.3s;
+}
+#header nav a:hover {
+    background-color: #b30000; 
+    border-radius: 5px;
+}
+
+
+/* Профиль */
+
+.profile-container {
+    position: fixed;
+    right: -300px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background-color: rgb(224, 127, 127);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+    transition: right 0.3s;
+    z-index: 1000;
+    border-left: 2px solid #8b0000;
+    color: #790000;
+}
+
+.profile-container.show {
+    right: 0;
+}
+
+.profile-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+h2, h3 {
+    margin-top: 20px;
+}
+
+button {
+    display: block;
+    width: 80%;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #a60000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #7a0000;
+}
+
+#change-password-form {
+    display: none;
+    text-align: left;
+    margin-top: 20px;
+}
+
+#change-password-form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+#change-password-form input {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

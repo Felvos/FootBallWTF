@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Футбол</title>
+    <link rel="stylesheet" href="/Styles/header.css">
+    <link rel="stylesheet" href="/Styles/style.css">
+    <link rel="stylesheet" href="/Styles/calendar.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <h1>Календарь матчей</h1>
+        <div class="filter-container">
+            <input type="text" id="team-search" placeholder="Поиск по команде">
+            <select id="sort-date">
+                <option disabled selected>Выберите фильтр</option>
+                <option value="asc">По возрастанию даты</option>
+                <option value="desc">По убыванию даты</option>
+            </select>
+            <button id="clear-filters">Очистить фильтры</button>
+        </div>
+        <div id="table-container"></div>
+        <div id="info-block" class="info-block">
+            <p>Добро пожаловать на сайт информационной <br>системы чемпионата России по футболу! <br> Здесь вы найдете всю информацию<br> о прошедших матчах, а также <br>аналитику и турнирную сетку.</p>
+            <button id="close-info-block">Закрыть</button>
+        </div>
+
+
+
+        <img class="character" src="../sources/Akinfeev.png">
+        <img class="character2" src="../sources/chemp_logo.png">
+
+        <script src="/scripts/utils.js"></script>
+        <script>
+            let data = <%- JSON.stringify(data) %>;
+            let filteredData = data.map(row => ({
+                    ...row,
+                    "Дата матча": formatRussianDate(row["Дата матча"])
+                }));
+            $(document).ready(function(){
+                const tableContainer = document.getElementById('table-container');
+                tableContainer.innerHTML = generateHTMLTableForQuery(filteredData);
+                document.getElementById('team-search').addEventListener('input', filterAndSortData);
+                document.getElementById('sort-date').addEventListener('change', filterAndSortData);
+                document.getElementById('clear-filters').addEventListener('click', clearFilters);
+                document.getElementById('close-info-block').addEventListener('click', function() {
+                document.getElementById('info-block').style.display = 'none';
+                });
+            });
+
+
+            function filterAndSortData() {
+                let filteredData = data;
+                const searchTerm = document.getElementById('team-search').value.toLowerCase();
+                if (searchTerm) {
+                    filteredData = filteredData.filter(row =>
+                        row["Команда хозяев"].toLowerCase().includes(searchTerm) ||
+                        row["Команда гостей"].toLowerCase().includes(searchTerm)
+                    );
+                }
+                const sortOrder = document.getElementById('sort-date').value;
+                if (sortOrder === 'asc' || sortOrder === 'desc') {
+                    filteredData.sort((a, b) => {
+                        const dateA = new Date(a["Дата матча"]);
+                        const dateB = new Date(b["Дата матча"]);
+                        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+                    });
+                }
+                filteredData = filteredData.map(row => ({
+                    ...row,
+                    "Дата матча": formatRussianDate(row["Дата матча"])
+                }));
+                console.log(filteredData); // Какого х*я он не перерисовывает дату на хаос??? С очистки фильтров
+                const tableContainer = document.getElementById('table-container');
+                tableContainer.innerHTML = generateHTMLTableForQuery(filteredData);
+            }
+
+
+            function formatRussianDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+            function clearFilters() {
+                document.getElementById('team-search').value = '';
+                document.getElementById('sort-date').value = 'Выберите фильтр';
+                filterAndSortData();
+            }
+            
+        </script>
+</body>
+
+</html>

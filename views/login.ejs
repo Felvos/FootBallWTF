@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Футбол</title>
+    <link rel="stylesheet" href="/Styles/style.css">
+    <link rel="stylesheet" href="/Styles/autorization.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <script> 
+        $(document).ready(function() {
+        $('#show-register').click(function(e) {
+            e.preventDefault();
+            $('#login-div').hide();
+            $('#register-div').show();
+        });
+
+        $('#show-login').click(function(e) {
+            e.preventDefault();
+            $('#register-div').hide();
+            $('#login-div').show();
+        });
+        });
+    </script>
+
+    <div class="autorisationContainer">
+        <div class="logo"></div>
+        <div id="login-div" class="form-container">
+            <form id="login-form">
+                <table class="input">
+                    <tr>
+                        <td class="label">Логин:</td>
+                        <td> <input class="login" type="text" name="login"> </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Пароль:</td>
+                        <td> <input class="login" type="password" name="password"> </td>
+                    </tr>
+                    <td colspan="2" class="textref"> <input class="button" type="submit" name="autorization" value="Войти"> </td>
+                    <tr>
+                        <td colspan="2" class="textref"> <a href="#" class="textref" id="show-register"> <b>Регистрация</b> </a></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div id="register-div" class="form-container" style="display: none;">
+            <form id="register-form">
+                <table class="input">
+                    <tr>
+                        <td class="label">Логин:</td>
+                        <td> <input class="login" type="text" name="login"> </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Пароль:</td>
+                        <td> <input class="login" type="password" name="password"> </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Повторите пароль:</td>
+                        <td> <input class="login" type="password" name="repeated_password"> </td>
+                    </tr>
+                    <td colspan="2" class="textref"> <input class="button" type="submit" name="autorization" value="Создать аккаунт"> </td>
+                    <tr>
+                        <td colspan="2" class="textref"> <a href="#" class="textref" id="show-login"> <b>У меня уже есть аккаунт</b> </a></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+    <script src="/scripts/autorisation.js"></script>
+</body>
+    
+</html>

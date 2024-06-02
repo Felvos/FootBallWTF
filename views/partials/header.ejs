@@ -1,0 +1,79 @@
+<header id="header">
+    <nav>
+        <div class="left">
+            <a href="/main">Календарь матчей</a>
+            <a href="/tournamenttable">Турнирная таблица</a>
+            <a href="/statistic">Аналитика</a>
+            <% if (userId && userRole === 'admin') { %>
+                <a href="/admin">Админ панель</a>
+            <% } %>
+            <a href="/feedback">Обратная связь</a>
+        </div>
+        <div class="right">
+            <a class="openProfile" id="openProfile"> Профиль</a>
+        </div>
+
+    </nav>
+
+    <div class="profile-container" id="profile-container">
+        <div class="profile-content">
+            <span class="close-btn" id="close-btn">&times;</span>
+            <h2>Профиль</h2>
+            <p>Логин: <%= userLogin %></p>
+            <button id="change-password-btn">Сменить пароль</button>
+            <button id="logout-btn">Выйти</button>
+
+            <div id="change-password-form" style="display: none;">
+                <h3>Сменить пароль</h3>
+                <form id="change-pass-form">
+                    <label for="current-password">Текущий пароль:</label>
+                    <input type="password" id="current-password" name="current-password" required>
+                    <label for="new-password">Новый пароль:</label>
+                    <input type="password" id="new-password" name="new-password" required>
+                    <button type="submit" id="submit-password-change" disabled>Подтвердить</button>
+                    <div id="error-message" style="display: none; color: #b30000;">Неверный пароль</div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/scripts/profile.js"></script>
+    <script>
+        $(document).ready(function() {  
+            $('#change-pass-form').on('submit', function(e) {
+                e.preventDefault();
+                const userLogin = <%- JSON.stringify(userLogin) %>;
+                const currentPassword = $('#current-password').val();
+                const newPassword = $('#new-password').val();
+                const formData = {
+                    userLogin: userLogin,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                };
+                $.ajax({
+                    url: '/change-password',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response, textStatus, jqXHR) {
+                        if (jqXHR.status === 200) {
+                            alert('Пароль успешно изменен');
+                            $('#change-password-form').hide();
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown)
+                    {
+                        if (jqXHR.status === 401) 
+                        {
+                            console.log(jqXHR.responseJSON.message);
+                            $('#error-message').show();
+                        }
+                        else
+                        {
+                            console.log(jqXHR.responseJSON.message);
+                            alert(jqXHR.responseJSON.message);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</header>

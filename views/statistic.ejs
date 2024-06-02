@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Футбол</title>
+        <link rel="stylesheet" href="/Styles/header.css">
+        <link rel="stylesheet" href="/Styles/style.css">
+        <link rel="stylesheet" href="/styles/analytics.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <%- include('partials/header') %>
+        <h1>Аналитика</h1>
+        <div class="container">
+            <div class="filter-container">
+                <!-- <input type="text" id="search" placeholder="Поиск по значению"> -->
+                <select id="analyticSelector">
+                    <option disabled selected>Выберите знание</option>
+                    <option value="allPlayers">Все игроки</option>
+                    <option value="teamPlayers">Игроки команды</option>
+                    <option value="allTrainers">Тренеры</option>
+                </select>
+                <select id="teamSelector" style="display: none;">
+                    
+                </select>
+                <button id="clear-filters">Очистить фильтры</button>
+            </div>
+            <div id="table-container">
+
+            </div>
+            <img class="character" src="../sources/kokorin.png">
+            <img class="character2" src="../sources/mamaev.png">
+        </div>
+    
+        <script src="/scripts/utils.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#analyticSelector').change(function() {
+                    const selectedFilter = $(this).val();
+                    if (selectedFilter === 'teamPlayers') {
+                        $('#teamSelector').show();
+                        loadTeams();
+                    } else {
+                        $('#teamSelector').hide();
+                        loadData(selectedFilter);
+                    }
+                });
+
+                $('#teamSelector').change(function() {
+                    const selectedTeam = $(this).val();
+                    loadData('teamPlayers', selectedTeam);
+                });
+
+                $('#clear-filters').click(function() {
+                    // $('#search').val('');
+                    $('#analyticSelector').val('Выберите знание');
+                    $('#teamSelector').hide().val('');
+                    $('#table-container').empty();
+                });
+            });
+
+            function loadData(filter, team = null) {
+                let url = '/statistic';
+                switch (filter) {
+                    case 'allPlayers':
+                        url += '/getAllPlayers';
+                        break;
+                    case 'allTrainers':
+                        url += '/getAllTrainers';
+                        break;
+                    case 'teamPlayers':
+                        url += `/getAllPlayersOfTeam?team=${team}`;
+                        break;
+                    default:
+                        return;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(data) 
+                    {
+                        const tableHTML = generateHTMLTableForQuery(data);
+                        $('#table-container').html(tableHTML);
+                    },
+                    error: function(error) 
+                    {
+                        console.error('Ошибка при загрузке данных:', error);
+                    }
+                });
+            }
+
+            function loadTeams() {
+                $.ajax({
+                    url: '/statistic/getAllTeams',
+                    method: 'GET',
+                    success: function(data) {
+                        let options = '<option disabled selected>Выберите команду</option>';
+                        data.forEach(team => {
+                            options += `<option value="${team.name}">${team.name}</option>`;
+                        });
+                        $('#teamSelector').html(options);
+                    },
+                    error: function(error) {
+                        console.error('Ошибка при загрузке команд:', error);
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
+        </script>
+
+    </body>
+
+</html>

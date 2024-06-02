@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Футбол</title>
+        <link rel="stylesheet" href="/Styles/header.css">
+        <link rel="stylesheet" href="/Styles/style.css">
+        <link rel="stylesheet" href="/Styles/admin.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <%- include('partials/header') %>
+        <h1>Административная панель</h1>
+    <div class="container">
+        <div class="control-panel">
+            <select id="operation-selector">
+                <option disabled selected>Выберите данные для редактирования</option>
+                <option value="teams">Команды</option>
+                <option value="players">Игроки</option>
+                <option value="trainers">Тренеры</option>
+                <option value="matches">Матчи</option>
+            </select>
+            <div class="control-buttons-pannel">
+                <button id="add-data">Добавить данные</button>
+                <button id="update-data">Изменить данные</button>
+                <button id="delete-data">Удалить данные</button>
+            </div>
+        </div>    
+    </div>
+    <div class="form-container" id="form-container">
+        
+    </div>
+    <div class="table-container" id="table-container">
+        
+    </div>
+
+    <script src="/scripts/admin.js"></script>
+    <script src="/scripts/utils.js"></script>
+    <script>
+
+        let currentAction = "none";
+         $(document).ready(function () {
+            $('#add-data').on('click', function () {
+                currentAction = "adding";
+                callerTable('adding');
+                showForm('add');
+            });
+            $('#update-data').on('click', function () {
+                currentAction = "updating";
+                callerTable('updating');
+                showForm('update');
+            });
+            $('#delete-data').on('click', function () {
+                currentAction = "deleting";
+                callerTable('deleting');
+                showForm('delete');
+            });
+            $('#operation-selector').change(function() {
+                $('#table-container').html("");
+                $('#form-container').html("").hide();
+            });
+            $('#form-container').on('click', '#team-form-delete', function () {
+                deleteSelectedRows('teams');
+            });
+            $('#form-container').on('click', '#player-form-delete', function () {
+                deleteSelectedRows('players');
+            });
+            $('#form-container').on('click', '#trainer-form-delete', function () {
+                deleteSelectedRows('trainers');
+            });
+            $('#form-container').on('click', '#match-form-delete', function () {
+                deleteSelectedRows('matches');
+            });
+        });
+            
+
+        function callerTable(procedure){
+            const selectedFilter = $('#operation-selector').val();
+            loadData(selectedFilter, procedure);
+        }
+        //------------------------------------Загрузка таблиц для манипуляций------------------------------------
+        function loadData(filter, procedure) 
+        {
+            let url = '/admin'; 
+            switch (filter) {
+                case 'players':
+                    url += '/getAllPlayers';
+                    break;
+                case 'trainers':
+                    url += '/getAllTrainers';
+                    break;
+                case 'teams':
+                    url += `/getAllTeams`;
+                    break;
+                case 'matches':
+                    url += `/getAllMatches`;
+                    break;
+                default:
+                    return;
+            }
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(data) 
+                {
+                    switch (procedure){
+                        case 'adding':
+                            const tableHTML = generateHTMLTableForQueryAdding(data);
+                            $('#table-container').html(tableHTML);
+                            break;
+                        case 'updating':
+                            const tableHTML2 = generateHTMLTableForQueryUpdating(data);
+                            $('#table-container').html(tableHTML2);
+                            break;
+                        case 'deleting':
+                            const tableHTML3 = generateHTMLTableForQueryDeleting(data);
+                            $('#table-container').html(tableHTML3);
+                            break;
+                        default:
+                        return;
+                    }
+                    
+                },
+                error: function(error) 
+                {
+                    console.error('Ошибка при загрузке данных:', error);
+                }
+            });
+        }
+        //------------------------------------Форма манипуляций над датой------------------------------------
+        function showForm(action) {
+            const selectedFilter = $('#operation-selector').val();
+            let formHTML = '';
+            switch (selectedFilter) {
+                case 'teams':
+                    formHTML = generateTeamForm(action);
+                    break;
+                case 'players':
+                    formHTML = generatePlayerForm(action);
+                    break;
+                case 'trainers':
+                    formHTML = generateTrainerForm(action);
+                    break;
+                case 'matches':
+                    formHTML = generateMatchForm(action);
+                    break;
+                default:
+                    return;
+            }
+            $('#form-container').html(formHTML).show();
+        }
+
+        function generateTeamForm(action) {
+            if(action === 'add' || action === 'update')
+            {
+                return `
+                    <form id="team-form-${action}">
+                        <label for="team-name">Название команды:</label>
+                        <input type="text" id="team-name" name="team-name"><br><br>
+                        <label for="team-city">Город:</label>
+                        <input type="text" id="team-city" name="team-city"><br><br>
+                        <button type="submit">${action === 'add' ? 'Добавить' : 'Изменить'}</button>
+                    </form>
+                `;
+            }
+            else
+            {
+                return '<button id="team-form-delete"> Удалить </button>'
+            }
+        }
+
+        function generatePlayerForm(action) {
+            if(action === 'add' || action === 'update')
+            {
+                return `
+                    <form id="player-form-${action}">
+                        <label for="player-fio">ФИО:</label>
+                        <input type="text" id="player-fio" name="player-fio"><br><br>
+                        <label for="player-team">Команда:</label>
+                        <select id="player-team" name="player-team">
+                        </select><br><br>
+                        <label for="player-position">Позиция:</label>
+                        <select id="player-position" name="player-position">
+                            <option value="goalkeeper">Вратарь</option>
+                            <option value="midfielder">Полузащитник</option>
+                            <option value="defender">Защитник</option>
+                            <option value="forward">Нападающий</option>
+                        </select><br><br>
+                        <button type="submit">${action === 'add' ? 'Добавить' : 'Изменить'}</button>
+                    </form>
+                `;
+            }
+            else
+            {
+                return '<button id="player-form-delete"> Удалить </button>'
+            }
+        }
+
+        function generateTrainerForm(action) {
+            if(action === 'add' || action === 'update')
+            {
+                return `
+                    <form id="trainer-form-${action}">
+                        <label for="trainer-fio">ФИО:</label>
+                        <input type="text" id="trainer-fio" name="trainer-fio"><br><br>
+                        <label for="trainer-age">Возраст:</label>
+                        <input type="number" id="trainer-age" name="trainer-age"><br><br>
+                        <label for="trainer-experience">Стаж (лет):</label>
+                        <input type="number" id="trainer-experience" name="trainer-experience"><br><br>
+                        <label for="trainer-team">Команда:</label>
+                        <select id="trainer-team" name="trainer-team">
+                            <!-- Динамически добавленные опции -->
+                        </select><br><br>
+                        <button type="submit">${action === 'add' ? 'Добавить' : 'Изменить'}</button>
+                    </form>
+                `;
+            }
+            else
+            {
+                return '<button id="trainer-form-delete"> Удалить </button>'
+            }
+        }
+
+        function generateMatchForm(action) {
+            if(action === 'add' || action === 'update')
+            {
+                return `
+                    <form id="match-form-${action}">
+                        <label for="match-home-team">Хозяева:</label>
+                        <select id="match-home-team" name="match-home-team">
+                            <!-- Динамически добавленные опции -->
+                        </select><br><br>
+                        <label for="match-home-score">Очки хозяев:</label>
+                        <input type="number" id="match-home-score" name="match-home-score"><br><br>
+                        <label for="match-away-team">Гости:</label>
+                        <select id="match-away-team" name="match-away-team">
+                            <!-- Динамически добавленные опции -->
+                        </select><br><br>
+                        <label for="match-away-score">Очки гостей:</label>
+                        <input type="number" id="match-away-score" name="match-away-score"><br><br>
+                        <label for="match-date">Дата матча:</label>
+                        <input type="date" id="match-date" name="match-date"><br><br>
+                        <button type="submit">${action === 'add' ? 'Добавить' : 'Изменить'}</button>
+                    </form>
+                `;
+            }
+            else
+            {
+                return '<button id="match-form-delete"> Удалить </button>'
+            }
+        }
+        //-------------------------------------Обработчики для кнопок формы-----------------------------------
+
+        
+
+        //Он не видит свежесозданные чекбоксы
+        function deleteSelectedRows(selectedTable) {
+            const selectedIds = [];
+            $('.checkbox:checked').each(function() {
+                selectedIds.push($(this).data('id'));
+            });
+            if (selectedIds.length === 0) {
+                alert('Не выбраны строки для удаления.');
+                return;
+            }
+            if (confirm('Вы уверены, что хотите удалить выбранные строки?')) {
+                $.ajax({
+                    url: `/admin/delete${selectedTable}`,
+                    method: 'POST',
+                    data: { ids: selectedIds },
+                    success: function(response) {
+                        alert('Успешно удалено');
+                        callerTable(currentAction);
+                    },
+                    error: function(error) {
+                        console.error('Ошибка при удалении данных:', error);
+                        alert('Ошибка при удалении данных');
+                    }
+                });
+            }
+        }
+    </script>
+    </body>
+
+</html>

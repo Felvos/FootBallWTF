@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Футбол</title>
+        <link rel="stylesheet" href="/Styles/header.css">
+        <link rel="stylesheet" href="/Styles/style.css">
+        <link rel="stylesheet" href="/Styles/feedback.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <%- include('partials/header') %>
+        <script src="/scripts/feedback.js"></script>
+
+        <div class="feedback-container">
+            <h2>Форма обратной связи</h2>
+            <form id="feedback-form">
+                <div class="form-group">
+                    <label for="fio">Имя пользователя:</label>
+                    <input type="text" id="fio" name="fio" required>
+                </div>
+                <div class="form-group">
+                    <label for="mail">Почта:</label>
+                    <input type="email" id="mail" name="mail" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Отзыв:</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" id="submit-button" disabled>Отправить</button>
+            </form>
+            <div id="success-message" class="hidden">Заявка принята. Спасибо за ваш отзыв!</div>
+        </div>
+        <img class="character" src="../sources/utkin.png">
+        <img class="character2" src="../sources/genich.png">
+
+    </body>
+
+</html>

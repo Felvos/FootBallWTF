@@ -1,0 +1,44 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.container {
+    text-align: center;
+}
+
+h1 {
+    font-size: 6em;
+    margin: 0;
+    color: #b30000; /* Красный цвет */
+}
+
+p {
+    font-size: 1.5em;
+    margin: 0;
+    color: #333;
+}
+
+.home-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    color: white;
+    background-color: #b30000; /* Красный цвет */
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.home-link:hover {
+    background-color: #6f0000; /* Более темный красный цвет при наведении */
+}
+img{
+    height: 90px;
+    width: 80px;
+}
